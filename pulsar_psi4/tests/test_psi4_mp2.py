@@ -9,7 +9,7 @@ from MiscFxns import *
 from StandardModules import *
 import pulsar_psi4
 
-correct_energy=-231.5384495068172
+correct_energy={"MP2":-231.5384495068172,"HF":-230.72770624141242}
 correct_grad=[0.006137035827856574, 0.0035173274613208502, -2.942711926490877e-06,
               0.006032365704163989, -0.003591617404611433, 1.7006549651828846e-05,
               8.308936283627335e-05, 0.007081783050386731, 3.7892862739588302e-06,
@@ -52,11 +52,16 @@ def Run(mm):
         wfn=psr.datastore.Wavefunction()
         wfn.system=mol
         MyMod=mm.get_module("PSI4_MP2",0)
+        MySCFMod=mm.get_module("PSI4_SCF_DRY",0)
     
         NewWfn,Egy=MyMod.deriv(0,wfn)
-        tester.test_value("Psi4's MP2 via deriv(0)",Egy[0],correct_energy)
+        tester.test_value("Psi4's MP2 via deriv(0)",Egy[0],correct_energy["MP2"])
+        SCFWfn,SCFEgy=MySCFMod.deriv(0,wfn)
+        tester.test_value("Psi4's HF via deriv(0)",SCFEgy[0],correct_energy["HF"])
         NewWfn,Egy=MyMod.energy(wfn)
-        tester.test_value("Psi4's MP2 via energy()",Egy,correct_energy)
+        tester.test_value("Psi4's MP2 via energy()",Egy,correct_energy["MP2"])
+        SCFWfn,SCFEgy=MySCFMod.energy(wfn)
+        tester.test_value("Psi4's HF via energy()",SCFEgy,correct_energy["HF"])
         NewWfn,Egy=MyMod.deriv(1,wfn)
         tester.test_value("Psi4's MP2 via deriv(1)",
             sum([abs(i-j) for i,j in zip(Egy,correct_grad)]),0.0)

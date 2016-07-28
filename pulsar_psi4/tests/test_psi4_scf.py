@@ -56,6 +56,7 @@ def Run(mm):
         NewWfn,Egy=MyMod.deriv(0,wfn)
         tester.test_value("Psi4's SCF via deriv(0)",Egy[0],correct_energy)
         NewWfn,Egy=MyMod.energy(wfn)
+        print("Back")
         tester.test_value("Psi4's SCF via energy()",Egy,correct_energy)
         NewWfn,Egy=MyMod.deriv(1,wfn)
         tester.test_value("Psi4's SCF via deriv(1)",

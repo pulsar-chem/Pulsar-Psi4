@@ -1,0 +1,8 @@
+import sys
+sys.path.append('@PSI4_LIBRARY_DIR@')
+import psi4
+psi4.initialize()
+psi4.efp_init()
+from .PulsarPsi4Setup import *
+from .modinfo import *
+from .creator import *

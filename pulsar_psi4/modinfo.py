@@ -12,8 +12,11 @@ def make_psi4_entry(MethName):
 
 minfo = {
    'SCF':make_psi4_entry('SCF'),
+   'SCF_DRY':make_psi4_entry('SCF_DRY'),
    'MP2':make_psi4_entry('MP2'),
+   'MP2_DRY':make_psi4_entry('MP2_DRY'),
    'CCSD':make_psi4_entry('CCSD'),
+   'CCSD_DRY':make_psi4_entry('CCSD_DRY'),
    'CCSD(T)':make_psi4_entry('CCSD(T)')
 }
 
@@ -32,16 +35,28 @@ minfo['SCF']['options']={
    "GUESS":(OptionType.String,"SAD",False,None,"How to form the initial density"),
    "MAX_DERIV":(OptionType.Int,2,False,None,'Max analytic derivative')
 }
+minfo['SCF_DRY']['options']=minfo['SCF']['options']
 
-#Because of how Psi4 works need to forward
-CorrelationOptions={
+CorrOptions={
   "PRINT":(OptionType.Int,1,False,None,"The printing level for Psi4"),
   "FROZEN_CORE":(OptionType.String,"TRUE",False,None,"Are we freezing the core?"),
-  "cc_type":(OptionType.String,"DF",False,None,"Are we using density fitting?")
+}
+
+CCOptions={  
+   "cc_type":(OptionType.String,"DF",False,None,"Are we using density fitting?"),
 }
 
 
-minfo['MP2']['options']=CorrelationOptions
-minfo['CCSD']['options']=CorrelationOptions
-minfo['CCSD(T)']['options']=CorrelationOptions
+minfo['MP2']['options']={**CorrOptions,
+   "SCF_KEY":(OptionType.String,"PSI4_SCF_DRY",False,None,"The SCF module providing the reference")
+}
+minfo['MP2_DRY']['options']=minfo['MP2']['options']
+
+minfo['CCSD']['options']={**CorrOptions, **CCOptions,
+  "MP2_KEY":(OptionType.String,"PSI4_MP2_DRY",False,None,"The MP2 module used to generate the initial T2 amplitudes")}
+minfo['CCSD_DRY']['options']=minfo['CCSD']['options']
+  
+  
+minfo['CCSD(T)']['options']={**CorrOptions,**CCOptions,
+  "CCSD_KEY":(OptionType.String,"PSI4_CCSD_DRY",False,None,"The CCSD module used to generate the T1 and T2 amplitudes")}
 
