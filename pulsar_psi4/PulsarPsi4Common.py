@@ -7,6 +7,8 @@ import psi4
 import driver
 import numpy as np
 
+CheckpointPolicy=psr.datastore.CacheData.CachePolicy.CheckpointGlobal
+
 
 pulsar_2_psi4={
    "BASIS_SET":"BASIS",
@@ -99,14 +101,14 @@ def psi4_dryrun(wfn,my_options,cache,comp_hash,psi_variable=None):
            psi4.set_global_option(pulsar_2_psi4[i],my_options.get(i))
     if psi_variable and psi4.has_variable(psi_variable):
         Egy=psi4.get_variable(psi_variable)
-        cache.set(comp_hash,(wfn,[Egy]))
+        cache.set(comp_hash,(wfn,[Egy]),CheckpointPolicy)
     if cache.count(comp_hash): 
         return cache.get(comp_hash)
     return None
     
 def psi4_call(method,deriv,wfn,my_options,cache,comp_hash):
     """ The call to Psi4's Python interface common to all methods.  This is 
-        the real call.  All psi4_pseudo calls
+        the real call.  All dry runs use psi4_dryrun.
     
         method : the string name Psi4 calls the requested method
         deriv  : the order derivative we want
@@ -114,8 +116,9 @@ def psi4_call(method,deriv,wfn,my_options,cache,comp_hash):
         my_options : the Pulsar OptionMap instance that goes with this
         cache  : the Pulsar DataCache instance for caching deriv and wfn
         comp_hash   : the hash for the computation
+        
+        TODO: Save energies when higher order derivatives are requested
     """  
-    #key=my_options.get("BASIS_SET")#every Psi4 method requires a basis
     threads=1
     mem=64000000000
     my_mol = psr_2_psi4_mol(wfn.system)
@@ -140,7 +143,7 @@ def psi4_call(method,deriv,wfn,my_options,cache,comp_hash):
     FinalWfn.system=wfn.system
     
     if my_options.get("PRINT") == 0 : psi4.reopen_outfile()
-    cache.set(comp_hash,(FinalWfn,egy))
+    cache.set(comp_hash,(FinalWfn,egy),CheckpointPolicy)
     psi4.clean()
     return FinalWfn,egy
     

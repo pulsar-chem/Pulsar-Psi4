@@ -47,16 +47,18 @@ CCOptions={
 }
 
 
-minfo['MP2']['options']={**CorrOptions,
-   "SCF_KEY":(OptionType.String,"PSI4_SCF_DRY",False,None,"The SCF module providing the reference")
-}
+minfo['MP2']['options']=CorrOptions.copy()
+minfo['MP2']['options']["SCF_KEY"]=(OptionType.String,"PSI4_SCF_DRY",False,None,"The SCF module providing the reference")
+
 minfo['MP2_DRY']['options']=minfo['MP2']['options']
 
-minfo['CCSD']['options']={**CorrOptions, **CCOptions,
-  "MP2_KEY":(OptionType.String,"PSI4_MP2_DRY",False,None,"The MP2 module used to generate the initial T2 amplitudes")}
+minfo['CCSD']['options']=CorrOptions.copy()
+minfo['CCSD']['options'].update(CCOptions)
+minfo['CCSD']['options']["MP2_KEY"]=(OptionType.String,"PSI4_MP2_DRY",False,None,"The MP2 module used to generate the initial T2 amplitudes")
 minfo['CCSD_DRY']['options']=minfo['CCSD']['options']
   
   
-minfo['CCSD(T)']['options']={**CorrOptions,**CCOptions,
-  "CCSD_KEY":(OptionType.String,"PSI4_CCSD_DRY",False,None,"The CCSD module used to generate the T1 and T2 amplitudes")}
+minfo['CCSD(T)']['options']=CorrOptions.copy()
+minfo['CCSD(T)']['options'].update(CCOptions)
+minfo['CCSD(T)']['options']["CCSD_KEY"]=(OptionType.String,"PSI4_CCSD_DRY",False,None,"The CCSD module used to generate the T1 and T2 amplitudes")
 
