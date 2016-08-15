@@ -119,7 +119,8 @@ def psi4_call(method,deriv,wfn,my_options,cache,comp_hash):
         
         TODO: Save energies when higher order derivatives are requested
     """  
-    threads=1
+    threads=os.getenv("OMP_NUM_THREADS",1)
+    print(threads)
     mem=64000000000
     my_mol = psr_2_psi4_mol(wfn.system)
     if my_options.get("PRINT") == 0 : psi4.be_quiet()
@@ -128,7 +129,7 @@ def psi4_call(method,deriv,wfn,my_options,cache,comp_hash):
     if dry_values != None :
         return dry_values
     
-    psi4.set_nthread(threads)
+    psi4.set_nthread(int(threads))
     psi4.set_memory(mem)
     if(deriv==0):
         egy,psi4_wfn=driver.energy(method,molecule=my_mol,return_wfn=True)
