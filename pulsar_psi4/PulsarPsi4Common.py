@@ -9,7 +9,7 @@ import numpy as np
 
 CheckpointPolicy=psr.datastore.CacheData.CachePolicy.CheckpointGlobal
 
-
+#A map of pulsar options to Psi4 options
 pulsar_2_psi4={
    "BASIS_SET":"BASIS",
    "FITTING_BASIS":"DF_BASIS_SCF",
@@ -90,21 +90,69 @@ def psi4_wfn_2_psr(wfn):
     return PsrWfn
 
 def make_hash(my_options,order,wfn,opts):
+    """Code factorization of the process of making hashes for Psi4 computations.
+    Using this function also ensures all hashes are made consistently.
+    
+    my_options (psr.datastore.OptionMap) : This module's full set of options
+    order (int) : Which derivative are we computing?
+    wfn (psr.datastore.Wavefunction) : The wavefunction for this system
+    opts (list of strings) : The options that actually affect the energy
+    """
      #Hash input to calculation, return if we know the answer
     option_hash=my_options.hash_values({i for i in opts})
     sys_hash=wfn.system.my_hash()
     return str((order,sys_hash,option_hash))    
 
 def psi4_dryrun(wfn,my_options,cache,comp_hash,psi_variable=None):
+    """
+    This function is the call to Psi4's API that is common to all pulsar psi4
+    adaptations.  
+    
+    This function is not as straightforward as it would first appear.  Pulsar
+    and Psi4 do things differently.  Specifically Pulsar has no knowledge of
+    what modules a module internally calls, where Psi4 does.  In order to play
+    nicely with Pulsar we need to simulate Pulsar behavior, i.e. pretend Psi4
+    actually called submodules and did not just run everything its self.
+    To do this we introduce this function, which is the stuff common to all
+    modules in the Psi4 call whether they are dryruns (simulating recursive
+    module calls) or the real deal.  In particular this function does:
+    
+    1) Has each module set Psi4's global options up based on its share of 
+       options.  This has to be done before the real call or else say the HF 
+       part of the real MP2 Psi4 call will not be correct.
+    2) After the real call Psi variables need to be used to set sub modules
+       values
+    3) 1 and 2 have to occur through a deriv-like interface because all Pulsar
+       energy methods need to have the same interface.
+   
+    wfn (psr.datastore.wavefunction) : the system
+    my_options (psr.datastore.OptionMap) : the options for this module
+    cache (psr.datastore.CacheData) : the cache for this module
+    comp_hash (string) : the hash of this computation
+    psi_variable (string) : the Psi variable Psi4 uses for this energy quantity
+    
+    NOTE: Only energies work.  To my knowledge Psi4 doesn't support getting say
+    the HF component of the MP2 gradient.
+    """
+    
     for i in my_options.get_keys():
         if i in pulsar_2_psi4:
            psi4.set_global_option(pulsar_2_psi4[i],my_options.get(i))
+    if cache.count(comp_hash): 
+        return cache.get(comp_hash)
     if psi_variable and psi4.has_variable(psi_variable):
         Egy=psi4.get_variable(psi_variable)
         cache.set(comp_hash,(wfn,[Egy]),CheckpointPolicy)
-    if cache.count(comp_hash): 
         return cache.get(comp_hash)
     return None
+
+def psi4_clean():
+    """Function to put Psi4 back to a clean state.  In particular deletes
+       scratch files and resets Psi variables.  Call as last part of the real
+       deriv call to Psi4.
+    """
+    psi4.clean_variables()
+    psi4.clean()
     
 def psi4_call(method,deriv,wfn,my_options,cache,comp_hash):
     """ The call to Psi4's Python interface common to all methods.  This is 
@@ -120,14 +168,14 @@ def psi4_call(method,deriv,wfn,my_options,cache,comp_hash):
         TODO: Save energies when higher order derivatives are requested
     """  
     threads=os.getenv("OMP_NUM_THREADS",1)
-    print(threads)
     mem=64000000000
     my_mol = psr_2_psi4_mol(wfn.system)
     if my_options.get("PRINT") == 0 : psi4.be_quiet()
     
-    dry_values=psi4_dryrun(wfn,my_options,cache,comp_hash)
-    if dry_values != None :
-        return dry_values
+    for i in my_options.get_keys():
+        if i in pulsar_2_psi4:
+           psi4.set_global_option(pulsar_2_psi4[i],my_options.get(i))
+    if cache.count(comp_hash): return cache.get(comp_hash)
     
     psi4.set_nthread(int(threads))
     psi4.set_memory(mem)
@@ -145,6 +193,5 @@ def psi4_call(method,deriv,wfn,my_options,cache,comp_hash):
     
     if my_options.get("PRINT") == 0 : psi4.reopen_outfile()
     cache.set(comp_hash,(FinalWfn,egy),CheckpointPolicy)
-    psi4.clean()
     return FinalWfn,egy
     

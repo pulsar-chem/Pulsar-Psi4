@@ -28,6 +28,7 @@ class DF_CCSD(psr.modulebase.EnergyMethod,DF_CCSD_Guts):
             self.get_hash(order,wfn)
         )
         self.run_sub_calls(order,wfn)
+        psr24.psi4_clean()
         return FinalWfn,Egy
         
 class DF_CCSD_Dry(psr.modulebase.EnergyMethod,DF_CCSD_Guts):

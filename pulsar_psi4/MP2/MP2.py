@@ -24,6 +24,7 @@ class MP2(psr.modulebase.EnergyMethod,MP2_Guts):
         FinalWfn,Egy=psr24.psi4_call('mp2',order,wfn,self.options(),
            self.cache(),self.get_hash(order,wfn))
         self.run_sub_calls(order,wfn)
+        psr24.psi4_clean()
         return FinalWfn,Egy
 
 class MP2_Dry(psr.modulebase.EnergyMethod,MP2_Guts):

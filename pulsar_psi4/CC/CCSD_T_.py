@@ -23,6 +23,9 @@ class DF_CCSD_T_(psr.modulebase.EnergyMethod,DF_CCSD_T_Guts):
 
     def deriv_(self,order,wfn):
         self.run_sub_calls(order,wfn)
-        return psr24.psi4_call('fno-ccsd(t)',order,wfn,self.options(),
+        FinalWfn,Egy=psr24.psi4_call('fno-ccsd(t)',order,wfn,self.options(),
            self.cache(),self.get_hash(order,wfn))
+        self.run_sub_calls(order,wfn)
+        psr24.psi4_clean()
+        return FinalWfn,Egy
 
