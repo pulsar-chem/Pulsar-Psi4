@@ -12,7 +12,8 @@ class MP2_Guts:
             ['BASIS_SET','FROZEN_CORE','SCF_KEY']
         )
     def run_sub_calls(self,order,wfn):
-        scf=self.create_child(self.options().get('SCF_KEY'))
+        scf=self.create_child_from_option('SCF_KEY')
+        scf.options().change("IS_DRY",True)
         return scf.deriv_(order,wfn)
 
 class MP2(psr.modulebase.EnergyMethod,MP2_Guts):
@@ -21,17 +22,11 @@ class MP2(psr.modulebase.EnergyMethod,MP2_Guts):
 
     def deriv_(self,order,wfn):
         self.run_sub_calls(order,wfn)
+        if self.options().get("IS_DRY"):
+            return psr24.psi4_dryrun(wfn,self.options(),self.cache(),
+           self.get_hash(order,wfn),"MP2 TOTAL ENERGY")
         FinalWfn,Egy=psr24.psi4_call('mp2',order,wfn,self.options(),
            self.cache(),self.get_hash(order,wfn))
         self.run_sub_calls(order,wfn)
         psr24.psi4_clean()
         return FinalWfn,Egy
-
-class MP2_Dry(psr.modulebase.EnergyMethod,MP2_Guts):
-    def __init__(self,myid):
-        super(MP2_Dry,self).__init__(myid)
-    
-    def deriv_(self,order,wfn):
-        self.run_sub_calls(order,wfn)
-        return psr24.psi4_dryrun(wfn,self.options(),self.cache(),
-           self.get_hash(order,wfn),"MP2 TOTAL ENERGY")

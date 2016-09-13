@@ -11,16 +11,14 @@ def make_psi4_entry(MethName):
       "description" : "Computes a "+MethName+" derivative"}
 
 minfo = {
-   'SCF':make_psi4_entry('SCF'),
-   'SCF_DRY':make_psi4_entry('SCF_DRY'),
-   'MP2':make_psi4_entry('MP2'),
-   'MP2_DRY':make_psi4_entry('MP2_DRY'),
-   'CCSD':make_psi4_entry('CCSD'),
-   'CCSD_DRY':make_psi4_entry('CCSD_DRY'),
-   'CCSD(T)':make_psi4_entry('CCSD(T)')
+   'DF-SCF':make_psi4_entry('DF-SCF'),
+   'DF-MP2':make_psi4_entry('DF-MP2'),
+   'FNO-DF-CCSD':make_psi4_entry('FNO-DF-CCSD'),
+   'FNO-DF-CCSD(T)':make_psi4_entry('FNO-DF-CCSD(T)')
 }
 
-minfo['SCF']['options']={
+minfo['DF-SCF']['options']={
+   "IS_DRY":(OptionType.Bool,False,False,None,"Will this computation really run?"),
    "PRINT":(OptionType.Int,1,False,None,"The printing level for Psi4"),
    "MAX_ITER":(OptionType.Int,100,False,None,
          'Maximum number of iterations HF may use'),
@@ -35,9 +33,9 @@ minfo['SCF']['options']={
    "GUESS":(OptionType.String,"SAD",False,None,"How to form the initial density"),
    "MAX_DERIV":(OptionType.Int,2,False,None,'Max analytic derivative')
 }
-minfo['SCF_DRY']['options']=minfo['SCF']['options']
 
 CorrOptions={
+   "IS_DRY":(OptionType.Bool,False,False,None,"Will this computation really run?"),
   "PRINT":(OptionType.Int,1,False,None,"The printing level for Psi4"),
   "FROZEN_CORE":(OptionType.String,"TRUE",False,None,"Are we freezing the core?"),
 }
@@ -46,19 +44,15 @@ CCOptions={
    "cc_type":(OptionType.String,"DF",False,None,"Are we using density fitting?"),
 }
 
+minfo['DF-MP2']['options']=CorrOptions.copy()
+minfo['DF-MP2']['options']["SCF_KEY"]=(OptionType.String,"PSI4_SCF",False,None,"The SCF module providing the reference")
 
-minfo['MP2']['options']=CorrOptions.copy()
-minfo['MP2']['options']["SCF_KEY"]=(OptionType.String,"PSI4_SCF_DRY",False,None,"The SCF module providing the reference")
-
-minfo['MP2_DRY']['options']=minfo['MP2']['options']
-
-minfo['CCSD']['options']=CorrOptions.copy()
-minfo['CCSD']['options'].update(CCOptions)
-minfo['CCSD']['options']["MP2_KEY"]=(OptionType.String,"PSI4_MP2_DRY",False,None,"The MP2 module used to generate the initial T2 amplitudes")
-minfo['CCSD_DRY']['options']=minfo['CCSD']['options']
+minfo['FNO-DF-CCSD']['options']=CorrOptions.copy()
+minfo['FNO-DF-CCSD']['options'].update(CCOptions)
+minfo['FNO-DF-CCSD']['options']["MP2_KEY"]=(OptionType.String,"PSI4_MP2",False,None,"The MP2 module used to generate the initial T2 amplitudes")
   
   
-minfo['CCSD(T)']['options']=CorrOptions.copy()
-minfo['CCSD(T)']['options'].update(CCOptions)
-minfo['CCSD(T)']['options']["CCSD_KEY"]=(OptionType.String,"PSI4_CCSD_DRY",False,None,"The CCSD module used to generate the T1 and T2 amplitudes")
+minfo['FNO-DF-CCSD(T)']['options']=CorrOptions.copy()
+minfo['FNO-DF-CCSD(T)']['options'].update(CCOptions)
+minfo['FNO-DF-CCSD(T)']['options']["CCSD_KEY"]=(OptionType.String,"PSI4_CCSD",False,None,"The CCSD module used to generate the T1 and T2 amplitudes")
 

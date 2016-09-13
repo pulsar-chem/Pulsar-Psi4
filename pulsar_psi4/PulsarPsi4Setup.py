@@ -8,11 +8,8 @@ def pulsar_psi4_setup(mm):
        
        mm (psr.modulemanager.ModuleManger) : The modulemanager we are using
     """
-    mm.load_module("pulsar_psi4","SCF","PSI4_SCF")
-    mm.load_module("pulsar_psi4","SCF_DRY","PSI4_SCF_DRY")
-    mm.load_module("pulsar_psi4","MP2","PSI4_MP2")
-    mm.load_module("pulsar_psi4","MP2_DRY","PSI4_MP2_DRY")
-    mm.load_module("pulsar_psi4","CCSD","PSI4_CCSD")
-    mm.load_module("pulsar_psi4","CCSD_DRY","PSI4_CCSD_DRY")
-    mm.load_module("pulsar_psi4","CCSD(T)","PSI4_CCSD(T)")
+    mm.load_module("pulsar_psi4","DF-SCF","PSI4_SCF")
+    mm.load_module("pulsar_psi4","DF-MP2","PSI4_MP2")
+    mm.load_module("pulsar_psi4","FNO-DF-CCSD","PSI4_CCSD")
+    mm.load_module("pulsar_psi4","FNO-DF-CCSD(T)","PSI4_CCSD(T)")
     

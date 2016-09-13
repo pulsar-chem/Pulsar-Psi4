@@ -15,6 +15,7 @@ class DF_CCSD_T_Guts:
         
     def run_sub_calls(self,order,wfn):
         CCSD=self.create_child(self.options().get('CCSD_KEY'))
+        CCSD.options().change("IS_DRY",True)
         return CCSD.deriv(order,wfn)
 
 class DF_CCSD_T_(psr.modulebase.EnergyMethod,DF_CCSD_T_Guts):

@@ -7,7 +7,7 @@ import psi4
 import driver
 import numpy as np
 
-CheckpointPolicy=psr.datastore.CacheData.CachePolicy.CheckpointGlobal
+CheckpointPolicy=psr.datastore.CacheData.CheckpointGlobal
 
 #A map of pulsar options to Psi4 options
 pulsar_2_psi4={
@@ -98,7 +98,6 @@ def make_hash(my_options,order,wfn,opts):
     wfn (psr.datastore.Wavefunction) : The wavefunction for this system
     opts (list of strings) : The options that actually affect the energy
     """
-     #Hash input to calculation, return if we know the answer
     option_hash=my_options.hash_values({i for i in opts})
     sys_hash=wfn.system.my_hash()
     return str((order,sys_hash,option_hash))    
@@ -135,11 +134,15 @@ def psi4_dryrun(wfn,my_options,cache,comp_hash,psi_variable=None):
     the HF component of the MP2 gradient.
     """
     
+    out=psr.output.get_global_output()
+    
     for i in my_options.get_keys():
         if i in pulsar_2_psi4:
            psi4.set_global_option(pulsar_2_psi4[i],my_options.get(i))
     if cache.count(comp_hash): 
+        out.debug("Using cached value")
         return cache.get(comp_hash)
+    out.debug("Did not use cached value")
     if psi_variable and psi4.has_variable(psi_variable):
         Egy=psi4.get_variable(psi_variable)
         cache.set(comp_hash,(wfn,[Egy]),CheckpointPolicy)
@@ -167,8 +170,6 @@ def psi4_call(method,deriv,wfn,my_options,cache,comp_hash):
         
         TODO: Save energies when higher order derivatives are requested
     """  
-    threads=os.getenv("OMP_NUM_THREADS",1)
-    mem=64000000000
     my_mol = psr_2_psi4_mol(wfn.system)
     if my_options.get("PRINT") == 0 : psi4.be_quiet()
     
@@ -177,8 +178,6 @@ def psi4_call(method,deriv,wfn,my_options,cache,comp_hash):
            psi4.set_global_option(pulsar_2_psi4[i],my_options.get(i))
     if cache.count(comp_hash): return cache.get(comp_hash)
     
-    psi4.set_nthread(int(threads))
-    psi4.set_memory(mem)
     if(deriv==0):
         egy,psi4_wfn=driver.energy(method,molecule=my_mol,return_wfn=True)
         egy=[egy]
