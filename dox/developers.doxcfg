@@ -1,0 +1,6 @@
+INPUT+=  dox/cacheing.md \
+         dox/cc.md \
+         dox/hf.md \
+         dox/mp2.md
+
+INPUT += dox/mainpage.dox

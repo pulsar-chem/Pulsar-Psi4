@@ -1,18 +1,19 @@
 import sys
 import os
 sys.path.append('@PSI4_LIBRARY_DIR@')
-import psi4
 import pulsar as psr
-psi4.initialize()
-psi4.efp_init()
+import psi4.core as psi4
+
+
+
 threads=os.getenv("OMP_NUM_THREADS",1)
 mem=64000000000
-psi_scratch=os.getenv("PSI_SCRATCH","/tmp")
-psr.output.print_global_debug("Number of Psi4 threads is "+str(threads))
-psr.output.print_global_debug("Psi4 scratch is: "+str(psi_scratch))
-psi4.IOManager.shared_object().set_default_path(psi_scratch)
-psi4.set_nthread(int(threads))
 psi4.set_memory(mem)
-from .PulsarPsi4Setup import *
+psr.print_global_debug("Set Psi4's memory to"+str(mem))
+psi4.set_nthread(int(threads))
+psr.print_global_debug("Psi4 is using "+str(psi4.nthread())+" threads")
+
 from .modinfo import *
 from .creator import *
+
+

@@ -1,0 +1,33 @@
+/////////////////////////
+// MAINPAGE            //
+/////////////////////////
+/*! \mainpage
+
+Welcome to the Pulsar-Psi4 API user/developer manual.  As this is an interface
+to Psi4's code users are encouraged to consult the main Psi4 documentation
+(link is [here](http://www.psicode.org/psi4manual/master/index.html)) for the
+details of how the underlying electronic structure method behaves.  The sections
+in this user manual explain what options are callable from Pulsar (and what
+their names are) as well as what submodules are "called" from each module (see
+[Using Pulsar's Cache With Psi4](@ref cacheing) for an explanation of the
+quotes).
+
+\section main_sec Contents
+
+  - User notes
+    - [Hartree-Fock](@ref hf)
+    - [MP2](@ref mp2)
+    - [Coupled Cluster](@ref cc)
+  - Developer notes
+    - [Using Pulsar's Cache With Psi4](@ref cacheing)
+
+
+\section Authors
+
+\todo Authors
+
+\section license_sec License
+
+\todo License info
+
+*/

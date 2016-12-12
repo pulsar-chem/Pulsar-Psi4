@@ -64,7 +64,7 @@ def Run(mm):
         tester.print_results()
         
     except Exception as e:
-      psr.output.print_global_output("Caught exception in main handler\n")
+      psr.print_global_output("Caught exception in main handler\n")
       traceback.print_exc()
 
 with psr.ModuleAdministrator() as mm:

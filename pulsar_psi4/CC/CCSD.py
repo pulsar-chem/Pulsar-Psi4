@@ -4,7 +4,6 @@ import pulsar as psr
 thispath = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0,os.path.dirname(thispath))
 sys.path.insert(0,os.path.dirname(os.path.dirname(thispath)))
-import psi4
 import PulsarPsi4Common as psr24
 
 class DF_CCSD_Guts:
@@ -19,7 +18,7 @@ class DF_CCSD_Guts:
         return MP2.deriv_(order,wfn)
 
 
-class DF_CCSD(psr.modulebase.EnergyMethod,DF_CCSD_Guts):
+class DF_CCSD(psr.EnergyMethod,DF_CCSD_Guts):
     def __init__(self, myid):
         super(DF_CCSD, self).__init__(myid)
 

@@ -1,13 +1,6 @@
-#!/usr/bin/env python3
-import os
-import sys
+import pulsar as psr
+import pulsar_psi4 as psr4
 
-thispath = os.path.dirname(os.path.realpath(__file__))
-sys.path.insert(0, os.path.join(os.path.dirname(thispath),"helper"))
-
-from MiscFxns import *
-from StandardModules import *
-import pulsar_psi4
 
 correct_energy={"MP2":-231.5384495068172,"HF":-230.72770624141242}
 correct_grad=[0.006137035827856574, 0.0035173274613208502, -2.942711926490877e-06,
@@ -26,14 +19,12 @@ correct_grad=[0.006137035827856574, 0.0035173274613208502, -2.942711926490877e-0
 
 
 def Run(mm):
-    try:
-        tester = psr.testing.Tester("Testing Pulsar/Psi4 MP2 Interface")
-        tester.print_header()
-        pulsar_psi4.pulsar_psi4_setup(mm)
-        LoadDefaultModules(mm)
+        tester = psr.PyTester("Testing Pulsar/Psi4 MP2 Interface")
+        mm.load_module("pulsar_psi4","DF-SCF","PSI4_SCF")
+        mm.load_module("pulsar_psi4","DF-MP2","PSI4_MP2")
         mm.change_option("PSI4_MP2","BASIS_SET","aug-cc-pvdz")
         mm.change_option("PSI4_MP2","PRINT",0)#Set to 1+ to see all the output
-        mol=psr.system.make_system("""
+        mol=psr.make_system("""
         0 1
         C -1.2131 -0.6884 0.0000
         C -1.2028 0.7064 0.0001
@@ -49,33 +40,29 @@ def Run(mm):
         H 2.1577 1.2245 0.0000
         """)
     
-        wfn=psr.datastore.Wavefunction()
+        wfn=psr.Wavefunction()
         wfn.system=mol
         MyMod=mm.get_module("PSI4_MP2",0)
-        MySCFMod=mm.get_module("PSI4_SCF_DRY",0)
+        MySCFMod=mm.get_module("PSI4_SCF",0)
     
         NewWfn,Egy=MyMod.deriv(0,wfn)
-        tester.test_value("Psi4's MP2 via deriv(0)",Egy[0],correct_energy["MP2"])
+        tester.test_double("Psi4's MP2 via deriv(0)",Egy[0],correct_energy["MP2"])
         SCFWfn,SCFEgy=MySCFMod.deriv(0,wfn)
-        tester.test_value("Psi4's HF via deriv(0)",SCFEgy[0],correct_energy["HF"])
+        tester.test_double("Psi4's HF via deriv(0)",SCFEgy[0],correct_energy["HF"])
         NewWfn,Egy=MyMod.energy(wfn)
-        tester.test_value("Psi4's MP2 via energy()",Egy,correct_energy["MP2"])
+        tester.test_double("Psi4's MP2 via energy()",Egy,correct_energy["MP2"])
         SCFWfn,SCFEgy=MySCFMod.energy(wfn)
-        tester.test_value("Psi4's HF via energy()",SCFEgy,correct_energy["HF"])
+        tester.test_double("Psi4's HF via energy()",SCFEgy,correct_energy["HF"])
         NewWfn,Egy=MyMod.deriv(1,wfn)
-        tester.test_value("Psi4's MP2 via deriv(1)",
+        tester.test_double("Psi4's MP2 via deriv(1)",
             sum([abs(i-j) for i,j in zip(Egy,correct_grad)]),0.0)
         NewWfn,Egy=MyMod.gradient(wfn)
-        tester.test_value("Psi4's MP2 via gradient()",
+        tester.test_double("Psi4's MP2 via gradient()",
             sum([abs(i-j) for i,j in zip(Egy,correct_grad)]),0.0)
         
         tester.print_results()
-        
-    except Exception as e:
-      psr.output.print_global_output("Caught exception in main handler\n")
-      traceback.print_exc()
+        return tester.nfailed()
 
-with psr.ModuleAdministrator() as mm:
-    Run(mm)
-
-psr.finalize()
+def run_test():
+    with psr.ModuleAdministrator() as mm:
+        return Run(mm)

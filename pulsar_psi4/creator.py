@@ -3,7 +3,7 @@ from .MP2 import MP2
 from .CC import CCSD
 from .CC import CCSD_T_
 
-from pulsar.modulemanager import ModuleCreationFuncs
+from pulsar import ModuleCreationFuncs
 
 def insert_supermodule():
     cf = ModuleCreationFuncs()

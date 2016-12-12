@@ -16,7 +16,7 @@ class MP2_Guts:
         scf.options().change("IS_DRY",True)
         return scf.deriv_(order,wfn)
 
-class MP2(psr.modulebase.EnergyMethod,MP2_Guts):
+class MP2(psr.EnergyMethod,MP2_Guts):
     def __init__(self, myid):
         super(MP2, self).__init__(myid)
 

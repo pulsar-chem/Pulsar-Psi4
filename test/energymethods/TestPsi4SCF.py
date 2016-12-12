@@ -1,14 +1,18 @@
-#!/usr/bin/env python3
-import os
-import sys
+import pulsar as psr
+import pulsar_psi4 as psr4
 
-thispath = os.path.dirname(os.path.realpath(__file__))
-sys.path.insert(0, os.path.join(os.path.dirname(thispath),"helper"))
-
-from MiscFxns import *
-from StandardModules import *
-import pulsar_psi4
-
+def pulsar_psi4_setup(mm):
+    """Function that loads all modules within the Psi4 supermodule
+    
+       The super module's name is pulsar_psi4.  All modules are then loaded
+       with key PSI4_<MODULE_TYPE>.  
+       
+       mm (psr.modulemanager.ModuleManger) : The modulemanager we are using
+    """
+    mm.load_module("pulsar_psi4","DF-SCF","PSI4_SCF")
+    #mm.load_module("pulsar_psi4","DF-MP2","PSI4_MP2")
+    #mm.load_module("pulsar_psi4","FNO-DF-CCSD","PSI4_CCSD")
+    #mm.load_module("pulsar_psi4","FNO-DF-CCSD(T)","PSI4_CCSD(T)")
 correct_energy=-230.72770623626
 correct_grad=[-0.001551851884294686, -0.0008507155553763301, -1.2103725748197612e-05,
               -0.00160052369435415, 0.0008928151067878476, 3.250842858604653e-05,
@@ -26,53 +30,45 @@ correct_grad=[-0.001551851884294686, -0.0008507155553763301, -1.2103725748197612
 
 
 def Run(mm):
-    try:
-        tester = psr.testing.Tester("Testing Pulsar/Psi4 SCF Interface")
-        tester.print_header()
-        pulsar_psi4.pulsar_psi4_setup(mm)
-        LoadDefaultModules(mm)
+        tester = psr.PyTester("Testing Pulsar/Psi4 SCF Interface")
+        pulsar_psi4_setup(mm)
         mm.change_option("PSI4_SCF","BASIS_SET","aug-cc-pvdz")
         mm.change_option("PSI4_SCF","PRINT",0)#Set to 1+ to see all the output
-        mol=psr.system.make_system("""
-        0 1
-        C -1.2131 -0.6884 0.0000
-        C -1.2028 0.7064 0.0001
-        C -0.0103 -1.3948 0.0000
-        C 0.0104 1.3948 -0.0001
-        C 1.2028 -0.7063 0.0000
-        C 1.2131 0.6884 0.0000
-        H -2.1577 -1.2244 0.0000
-        H -2.1393 1.2564 0.0001
-        H -0.0184 -2.4809 -0.0001
-        H 0.0184 2.4808 0.0000
-        H 2.1394 -1.2563 0.0001
-        H 2.1577 1.2245 0.0000
+
+        wfn=psr.Wavefunction()
+        wfn.system=psr.make_system("""
+            0 1
+            C -1.2131 -0.6884 0.0000
+            C -1.2028 0.7064 0.0001
+            C -0.0103 -1.3948 0.0000
+            C 0.0104 1.3948 -0.0001
+            C 1.2028 -0.7063 0.0000
+            C 1.2131 0.6884 0.0000
+            H -2.1577 -1.2244 0.0000
+            H -2.1393 1.2564 0.0001
+            H -0.0184 -2.4809 -0.0001
+            H 0.0184 2.4808 0.0000
+            H 2.1394 -1.2563 0.0001
+            H 2.1577 1.2245 0.0000
         """)
-    
-        wfn=psr.datastore.Wavefunction()
-        wfn.system=mol
         MyMod=mm.get_module("PSI4_SCF",0)
-    
+
         NewWfn,Egy=MyMod.deriv(0,wfn)
-        tester.test_value("Psi4's SCF via deriv(0)",Egy[0],correct_energy)
+        tester.test_double("Psi4's SCF via deriv(0)",Egy[0],correct_energy)
         NewWfn,Egy=MyMod.energy(wfn)
-        print("Back")
-        tester.test_value("Psi4's SCF via energy()",Egy,correct_energy)
+
+        tester.test_double("Psi4's SCF via energy()",Egy,correct_energy)
         NewWfn,Egy=MyMod.deriv(1,wfn)
-        tester.test_value("Psi4's SCF via deriv(1)",
+        tester.test_double("Psi4's SCF via deriv(1)",
             sum([abs(i-j) for i,j in zip(Egy,correct_grad)]),0.0)
         NewWfn,Egy=MyMod.gradient(wfn)
-        tester.test_value("Psi4's SCF via gradient()",
+        tester.test_double("Psi4's SCF via gradient()",
             sum([abs(i-j) for i,j in zip(Egy,correct_grad)]),0.0)
         
         
         tester.print_results()
-        
-    except Exception as e:
-      psr.output.print_global_output("Caught exception in main handler\n")
-      traceback.print_exc()
+        return tester.nfailed()
 
-with psr.ModuleAdministrator() as mm:
-    Run(mm)
-
-psr.finalize()
+def run_test():
+    with psr.ModuleAdministrator() as mm:
+        return Run(mm)

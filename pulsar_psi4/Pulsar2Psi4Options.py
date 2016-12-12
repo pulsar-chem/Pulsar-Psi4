@@ -1,0 +1,13 @@
+#A map of pulsar options to Psi4 options
+pulsar_2_psi4={
+   "BASIS_SET":"BASIS",
+   "FITTING_BASIS":"DF_BASIS_SCF",
+   "MAX_ITER": "MAXITER",
+   "EGY_TOLERANCE":"E_CONVERGENCE",
+   "DENS_TOLERANCE":"D_CONVERGENCE",
+   "KEY_INITIAL_GUESS":"GUESS",
+   "DAMPING_FACTOR":"DAMPING_PERCENTAGE",
+   "GUESS":"GUESS",
+   "FROZEN_CORE":"FREEZE_CORE"
+   #"MAX_DERIV":"DERIV" Does Psi4 have this?
+}
