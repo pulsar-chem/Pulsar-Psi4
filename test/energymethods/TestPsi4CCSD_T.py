@@ -45,7 +45,7 @@ def Run(mm):
         NewWfn,Egy=MyMod.energy(wfn)
         tester.test_double("Psi4's CCSD(T) via energy()",Egy,correct_energy)
         NewWfn,Egy=MyCCSDMod.energy(wfn)
-        tester.test_double("Psi4's CCSD(T)'s CCSD via energy()",Egy[0],ccsd_corr_egy)
+        tester.test_double("Psi4's CCSD(T)'s CCSD via energy()",Egy,ccsd_corr_egy)
         NewWfn,Egy=MyMP2Mod.energy(wfn)
         tester.test_double("Psi4's CCSD(T)'s MP2 via energy()",Egy,mp2_corr_egy)
         NewWfn,Egy=MySCFMod.energy(wfn)

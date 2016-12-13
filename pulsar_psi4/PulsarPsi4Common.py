@@ -57,7 +57,7 @@ def psi4_dryrun(wfn,my_options,cache,comp_hash,psi_variable=None):
         data=(wfn,[Egy])
         cache.set(comp_hash,data,CheckpointPolicy)
         return cache.get(comp_hash,False)
-    return None
+    return wfn,[]
 
 def psi4_clean():
     """Function to put Psi4 back to a clean state.  In particular deletes

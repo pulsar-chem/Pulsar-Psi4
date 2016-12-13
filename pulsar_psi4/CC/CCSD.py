@@ -13,7 +13,7 @@ class DF_CCSD_Guts:
         )
         
     def run_sub_calls(self,order,wfn):
-        MP2=self.create_child(self.options().get('MP2_KEY'))
+        MP2=self.create_child_from_option('MP2_KEY')
         MP2.options().change("IS_DRY",True)
         return MP2.deriv_(order,wfn)
 
@@ -25,10 +25,8 @@ class DF_CCSD(psr.EnergyMethod,DF_CCSD_Guts):
     def deriv_(self,order,wfn):
         self.run_sub_calls(order,wfn)
         if self.options().get("IS_DRY"):
-            #TODO: Fix Me!!!!
-            return wfn, [0.1]
-            return psr24.psi4_dryrun(wfn, self.options(), self.cache(),
-                             self.get_hash(order, wfn), "CCSD TOTAL ENERGY")
+            return psr24.psi4_dryrun(wfn,self.options(),self.cache(),
+               self.get_hash(order,wfn),"CCSD TOTAL ENERGY")
         FinalWfn,Egy=psr24.psi4_call('fno-ccsd',order,wfn,self.options(),self.cache(),
             self.get_hash(order,wfn)
         )
