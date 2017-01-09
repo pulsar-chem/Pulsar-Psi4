@@ -1,6 +1,6 @@
 import sys
 import os
-sys.path.append('@PSI4_LIBRARY_DIR@')
+sys.path.append('@PSI4_CORE@')
 import pulsar as psr
 import psi4.core as psi4
 

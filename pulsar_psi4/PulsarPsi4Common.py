@@ -10,7 +10,7 @@ import numpy as np
 from Pulsar2Psi4Options import *
 from mints2pulsar.molecule import *
 from mints2pulsar.wavefunction import *
-CheckpointPolicy=psr.CacheData.CheckpointGlobal
+CheckpointPolicy=psr.CacheData.CheckpointGlobal|psr.CacheData.CheckpointLocal
 
 def make_hash(my_options,order,wfn,opts):
     """Code factorization of the process of making hashes for Psi4 computations.
@@ -47,7 +47,7 @@ def psi4_dryrun(wfn,my_options,cache,comp_hash,psi_variable=None):
     for i in my_options.get_keys():
         if i in pulsar_2_psi4:
            psi4.set_global_option(pulsar_2_psi4[i],my_options.get(i))
-    data=cache.get(comp_hash,False)
+    data=cache.get(comp_hash,True)
     if data: 
         out.debug("Using cached value\n")
         return data
@@ -56,7 +56,7 @@ def psi4_dryrun(wfn,my_options,cache,comp_hash,psi_variable=None):
         Egy=psi4.get_variable(psi_variable)
         data=(wfn,[Egy])
         cache.set(comp_hash,data,CheckpointPolicy)
-        return cache.get(comp_hash,False)
+        return cache.get(comp_hash,True)
     return wfn,[]
 
 def psi4_clean():

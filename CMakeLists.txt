@@ -42,4 +42,6 @@ add_dependencies(pulsar_psi4_test pulsar_psi4)
 #build directory for this project
 file(WRITE ${CMAKE_BINARY_DIR}/CTestTestfile.cmake "subdirs(test_stage)")
 
-
+# Install the staging directory
+install(DIRECTORY ${CMAKE_BINARY_DIR}/stage/${CMAKE_INSTALL_PREFIX}/ 
+        DESTINATION ${CMAKE_INSTALL_PREFIX} USE_SOURCE_PERMISSIONS)

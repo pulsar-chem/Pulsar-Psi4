@@ -1,18 +1,6 @@
 import pulsar as psr
 import pulsar_psi4 as psr4
 
-def pulsar_psi4_setup(mm):
-    """Function that loads all modules within the Psi4 supermodule
-    
-       The super module's name is pulsar_psi4.  All modules are then loaded
-       with key PSI4_<MODULE_TYPE>.  
-       
-       mm (psr.modulemanager.ModuleManger) : The modulemanager we are using
-    """
-    mm.load_module("pulsar_psi4","DF-SCF","PSI4_SCF")
-    #mm.load_module("pulsar_psi4","DF-MP2","PSI4_MP2")
-    #mm.load_module("pulsar_psi4","FNO-DF-CCSD","PSI4_CCSD")
-    #mm.load_module("pulsar_psi4","FNO-DF-CCSD(T)","PSI4_CCSD(T)")
 correct_energy=-230.72770623626
 correct_grad=[-0.001551851884294686, -0.0008507155553763301, -1.2103725748197612e-05,
               -0.00160052369435415, 0.0008928151067878476, 3.250842858604653e-05,
@@ -31,7 +19,7 @@ correct_grad=[-0.001551851884294686, -0.0008507155553763301, -1.2103725748197612
 
 def Run(mm):
         tester = psr.PyTester("Testing Pulsar/Psi4 SCF Interface")
-        pulsar_psi4_setup(mm)
+        mm.load_module("pulsar_psi4","DF-SCF","PSI4_SCF")
         mm.change_option("PSI4_SCF","BASIS_SET","aug-cc-pvdz")
         mm.change_option("PSI4_SCF","PRINT",0)#Set to 1+ to see all the output
 
