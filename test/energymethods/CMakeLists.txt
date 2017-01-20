@@ -1,4 +1,4 @@
-pulsar_py_test(energymethods TestPsi4SCF)
-pulsar_py_test(energymethods TestPsi4MP2)
-pulsar_py_test(energymethods TestPsi4CCSD)
-pulsar_py_test(energymethods TestPsi4CCSD_T)
+pulsar_psi4_py_test(energymethods TestPsi4SCF)
+pulsar_psi4_py_test(energymethods TestPsi4MP2)
+pulsar_psi4_py_test(energymethods TestPsi4CCSD)
+pulsar_psi4_py_test(energymethods TestPsi4CCSD_T)

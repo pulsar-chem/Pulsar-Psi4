@@ -6,6 +6,10 @@ find_package(pulsar REQUIRED)
 ########################
 # Core pulsar module tests
 ########################
+function(pulsar_psi4_py_test dir test_name)
+  pulsar_py_test(${dir} ${test_name} ${STAGE_DIR}/${PULSAR_MODULE_DIR})
+endfunction()
+
 foreach(dir energymethods)
   add_subdirectory(${dir})
   install(FILES ${CMAKE_BINARY_DIR}/${dir}/CTestTestfile.cmake DESTINATION ${dir})

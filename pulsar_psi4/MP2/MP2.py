@@ -11,6 +11,7 @@ class MP2_Guts:
         return psr24.make_hash(self.options(),order,wfn,
             ['BASIS_SET','FROZEN_CORE','SCF_KEY']
         )
+
     def run_sub_calls(self,order,wfn):
         scf=self.create_child_from_option('SCF_KEY')
         scf.options().change("IS_DRY",True)
@@ -23,8 +24,9 @@ class MP2(psr.EnergyMethod,MP2_Guts):
     def deriv_(self,order,wfn):
         self.run_sub_calls(order,wfn)
         if self.options().get("IS_DRY"):
+            my_hash=self.get_hash(order,wfn)
             return psr24.psi4_dryrun(wfn,self.options(),self.cache(),
-           self.get_hash(order,wfn),"MP2 TOTAL ENERGY")
+                                     my_hash,"MP2 TOTAL ENERGY")
         FinalWfn,Egy=psr24.psi4_call('mp2',order,wfn,self.options(),
            self.cache(),self.get_hash(order,wfn))
         self.run_sub_calls(order,wfn)

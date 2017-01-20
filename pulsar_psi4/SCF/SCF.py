@@ -17,8 +17,9 @@ class SCF(psr.EnergyMethod,SCF_Guts):
 
   def deriv_(self,order,wfn):
      if self.options().get("IS_DRY"):
+        my_hash=self.get_hash(order,wfn)
         return psr24.psi4_dryrun(wfn,self.options(),self.cache(),
-                              self.get_hash(order,wfn),"HF TOTAL ENERGY") 
+                                 my_hash,"HF TOTAL ENERGY")
 
      dawfn,egy=psr24.psi4_call('scf',order,wfn,self.options(),self.cache(),
         self.get_hash(order,wfn))
