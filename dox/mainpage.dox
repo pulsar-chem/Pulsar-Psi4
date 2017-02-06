@@ -15,11 +15,10 @@ quotes).
 \section main_sec Contents
 
   - User notes
+    - [Things to keep in mind](@ref key_points)
     - [Hartree-Fock](@ref hf)
     - [MP2](@ref mp2)
     - [Coupled Cluster](@ref cc)
-  - Developer notes
-    - [Using Pulsar's Cache With Psi4](@ref cacheing)
 
 
 \section Authors

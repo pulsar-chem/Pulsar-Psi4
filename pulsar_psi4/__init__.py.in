@@ -7,6 +7,9 @@ import psi4.core as psi4
 
 
 threads=os.getenv("OMP_NUM_THREADS",1)
+scratch=os.getenv("PSI_SCRATCH","/scratch/richard")
+psi4.IOManager.shared_object().set_default_path(scratch)
+psr.print_global_output("Setting Psi4's scratch to: "+scratch)
 mem=64000000000
 psi4.set_memory(mem)
 psr.print_global_debug("Set Psi4's memory to"+str(mem))

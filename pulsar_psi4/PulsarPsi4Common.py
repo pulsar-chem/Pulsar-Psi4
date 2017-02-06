@@ -25,10 +25,19 @@ def make_hash(my_options,order,wfn,opts):
     sys_hash=wfn.system.my_hash()
     return str((order,sys_hash,option_hash))    
 
-def psi4_set_options(my_options):
+def psi4_set_options(my_options,mod_name,wfn):
     for i in my_options.get_keys():
-        if i in pulsar_2_psi4:
-           psi4.set_global_option(pulsar_2_psi4[i],my_options.get(i))
+        opt=""
+        if mod_name in pulsar_2_psi4 and i in pulsar_2_psi4[mod_name]:
+            opt=pulsar_2_psi4[mod_name][i]
+        elif i in pulsar_2_psi4["GLOBAL"]:
+            opt=pulsar_2_psi4["GLOBAL"][i]
+        else: continue
+        da_opt=my_options.get(i)
+        if i=="BASIS_SET":
+            bs_name=wfn.system.as_universe()[0].basis_sets[da_opt].description
+            psi4.set_global_option(opt,bs_name)
+        else:psi4.set_global_option(opt,da_opt)
 
 def psi4_dryrun(wfn,my_options,cache,comp_hash,psi_variable=None):
     """
@@ -57,7 +66,6 @@ def psi4_dryrun(wfn,my_options,cache,comp_hash,psi_variable=None):
     """
     
     out=psr.get_global_output()
-    psi4_set_options(my_options)
     data=cache.get(comp_hash,True)
     if data: return data
     out.debug("Did not use cached value for: "+psi_variable+"\n")
@@ -92,7 +100,7 @@ def psi4_call(method,deriv,wfn,my_options,cache,comp_hash):
     my_mol = psr_2_psi4_mol(wfn.system)
     if my_options.get("PRINT") == 0 : psi4.be_quiet()
     
-    psi4_set_options(my_options)
+
     data=cache.get(comp_hash,True)
     if data: return data
     psr.print_global_debug("Cache miss in: "+method+"\n")

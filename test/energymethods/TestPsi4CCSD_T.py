@@ -18,7 +18,6 @@ def Run(mm):
         mm.load_module("pulsar_psi4","DF-MP2","PSI4_MP2")
         mm.load_module("pulsar_psi4","FNO-DF-CCSD","PSI4_CCSD")
         mm.load_module("pulsar_psi4","FNO-DF-CCSD(T)","PSI4_CCSD(T)")
-        mm.change_option("PSI4_CCSD(T)","BASIS_SET","aug-cc-pvdz")
         mm.change_option("PSI4_CCSD(T)","PRINT",0)#Set to 1+ to see all the output
         mol=psr.make_system("""
         0 1
@@ -28,7 +27,7 @@ def Run(mm):
         """)
     
         wfn=psr.Wavefunction()
-        wfn.system=mol
+        wfn.system=psr.apply_single_basis("PRIMARY","aug-cc-pvdz",mol)
         MyMod=mm.get_module("PSI4_CCSD(T)",0)
         MyCCSDMod=mm.get_module("PSI4_CCSD",0)
         MyMP2Mod=mm.get_module("PSI4_MP2",0)

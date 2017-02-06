@@ -24,6 +24,7 @@ class DF_CCSD(psr.EnergyMethod,DF_CCSD_Guts):
 
     def deriv_(self,order,wfn):
         self.run_sub_calls(order,wfn)
+        psr24.psi4_set_options(self.options(),"FNO-DF-CCSD",wfn)
         if self.options().get("IS_DRY"):
             return psr24.psi4_dryrun(wfn,self.options(),self.cache(),
                self.get_hash(order,wfn),"CCSD TOTAL ENERGY")

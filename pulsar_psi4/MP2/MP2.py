@@ -23,6 +23,7 @@ class MP2(psr.EnergyMethod,MP2_Guts):
 
     def deriv_(self,order,wfn):
         self.run_sub_calls(order,wfn)
+        psr24.psi4_set_options(self.options(),"DF-MP2",wfn)
         if self.options().get("IS_DRY"):
             my_hash=self.get_hash(order,wfn)
             return psr24.psi4_dryrun(wfn,self.options(),self.cache(),

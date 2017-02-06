@@ -22,7 +22,6 @@ def Run(mm):
         tester = psr.PyTester("Testing Pulsar/Psi4 MP2 Interface")
         mm.load_module("pulsar_psi4","DF-SCF","PSI4_SCF")
         mm.load_module("pulsar_psi4","DF-MP2","PSI4_MP2")
-        mm.change_option("PSI4_MP2","BASIS_SET","aug-cc-pvdz")
         mm.change_option("PSI4_MP2","PRINT",0)#Set to 1+ to see all the output
         mol=psr.make_system("""
         0 1
@@ -41,7 +40,8 @@ def Run(mm):
         """)
     
         wfn=psr.Wavefunction()
-        wfn.system=mol
+        wfn.system=psr.apply_single_basis("PRIMARY","aug-cc-pvdz",mol)
+
         MyMod=mm.get_module("PSI4_MP2",0)
         MySCFMod=mm.get_module("PSI4_SCF",0)
     
