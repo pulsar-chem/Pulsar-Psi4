@@ -22,7 +22,7 @@ def Run(mm):
         tester = psr.PyTester("Testing Pulsar/Psi4 MP2 Interface")
         mm.load_module("pulsar_psi4","DF-SCF","PSI4_SCF")
         mm.load_module("pulsar_psi4","DF-MP2","PSI4_MP2")
-        mm.change_option("PSI4_MP2","PRINT",0)#Set to 1+ to see all the output
+        mm.change_option("PSI4_MP2","PRINT",1)#Set to 1+ to see all the output
         mol=psr.make_system("""
         0 1
         C -1.2131 -0.6884 0.0000

@@ -1,7 +1,7 @@
 import pulsar as psr
 import pulsar_psi4 as psr4
 
-correct_energy={"CCSD":-76.26853406893483,
+correct_energy={"CCSD":-76.268636061439,
                 "MP2":-76.260764521668,
                 "HF":-76.041427954977}
                 
@@ -16,7 +16,7 @@ def Run(mm):
         mm.load_module("pulsar_psi4","DF-SCF","PSI4_SCF")
         mm.load_module("pulsar_psi4","DF-MP2","PSI4_MP2")
         mm.load_module("pulsar_psi4","FNO-DF-CCSD","PSI4_CCSD")
-        mm.change_option("PSI4_CCSD","PRINT",0)#Set to 1+ to see all the output
+        mm.change_option("PSI4_CCSD","PRINT",1)#Set to 1+ to see all the output
         mol=psr.make_system("""
         0 1
         O    1.2361419   1.0137761  -0.0612424

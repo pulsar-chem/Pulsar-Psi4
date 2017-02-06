@@ -22,6 +22,6 @@ pulsar_2_psi4={"GLOBAL":{ #Global in the sense they are not module specific
    "cc_type":"cc_type",
    #"MAX_DERIV":"DERIV" Does Psi4 have this?
    },#End Global
-   "FNO-DF-CCSD":{"JK_BUILD_TYPE":"CC_TYPE"},
-   "FNO-DF-CCSD(T)":{"JK_BUILD_TYPE":"CC_TYPE"},
+   "FNO-DF-CCSD":{"JK_BUILD_KEY":"CC_TYPE"},
+   "FNO-DF-CCSD(T)":{"JK_BUILD_KEY":"CC_TYPE"},
 }
