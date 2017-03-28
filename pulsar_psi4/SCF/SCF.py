@@ -21,9 +21,9 @@ class SCF(psr.EnergyMethod,SCF_Guts):
     super(SCF, self).__init__(myid)
 
   def deriv_(self,order,wfn):
+     psr24.psi4_set_options(self.options(),"DF-SCF",wfn)
      if self.options().get("IS_DRY"):
          return self.dry_run(order,wfn)
-
      dawfn,egy=psr24.psi4_call('scf',order,wfn,self.options(),self.cache(),
         self.get_hash(order,wfn))
      if order==1: #Save the energy

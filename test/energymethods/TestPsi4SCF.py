@@ -20,8 +20,7 @@ correct_grad=[-0.001551851884294686, -0.0008507155553763301, -1.2103725748197612
 def Run(mm):
         tester = psr.PyTester("Testing Pulsar/Psi4 SCF Interface")
         mm.load_module("pulsar_psi4","DF-SCF","PSI4_SCF")
-        mm.change_option("PSI4_SCF","BASIS_SET","aug-cc-pvdz")
-        mm.change_option("PSI4_SCF","PRINT",0)#Set to 1+ to see all the output
+        mm.change_option("PSI4_SCF","PRINT",1)#Set to 1+ to see all the output
 
         wfn=psr.Wavefunction()
         wfn.system=psr.make_system("""
@@ -39,6 +38,7 @@ def Run(mm):
             H 2.1394 -1.2563 0.0001
             H 2.1577 1.2245 0.0000
         """)
+        wfn.system=psr.apply_single_basis("PRIMARY","aug-cc-pvdz",wfn.system)
         MyMod=mm.get_module("PSI4_SCF",0)
 
         NewWfn,Egy=MyMod.deriv(0,wfn)

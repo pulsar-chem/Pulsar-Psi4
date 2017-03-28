@@ -11,10 +11,8 @@ def psr_2_psi4_wfn(wfn,key):
        TODO: Fitting basis sets
     """
     psi4mol=psr_2_psi4_mol(wfn.system)
-    psi4bs=psi4.BasisSet()
-    psi4bs.build(psi4mol,psr_2_psi4_bs(wfn,key))
-    psi4bs.print()
-    #return psi4.Wavefunction(psi4mol,psi4bs,options)
+    psi4bs=psr_2_psi4_bs(wfn,psi4mol,key)
+    return psi4.Wavefunction(psi4mol,psi4bs)
 
 def psi4_wfn_2_psr(wfn):
     alpha,beta=psr.Spin.alpha,psr.Spin.beta

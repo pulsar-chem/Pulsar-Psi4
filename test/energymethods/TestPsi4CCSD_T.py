@@ -1,11 +1,11 @@
 import pulsar as psr
 import pulsar_psi4 as psr4
 
-correct_energy=-76.273740284068
+correct_energy=-76.273847099732
 scf_corr_egy=-76.0414279550684569
 mp2_corr_egy=-76.260764556606
 mp3_corr_egy=-76.265524879741
-ccsd_corr_egy=-76.268534035737
+ccsd_corr_egy=-76.268636061439
 correct_grad=[0.00031057995481974883, 0.0006456409547574079, 0.011757658755370302,
               0.0067916083168123075, 0.0010965967413910217, -0.00613982532982517,
               -0.007102188271632036, -0.0017422376961489922, -0.005617833425544473]
@@ -18,8 +18,7 @@ def Run(mm):
         mm.load_module("pulsar_psi4","DF-MP2","PSI4_MP2")
         mm.load_module("pulsar_psi4","FNO-DF-CCSD","PSI4_CCSD")
         mm.load_module("pulsar_psi4","FNO-DF-CCSD(T)","PSI4_CCSD(T)")
-        mm.change_option("PSI4_CCSD(T)","BASIS_SET","aug-cc-pvdz")
-        mm.change_option("PSI4_CCSD(T)","PRINT",0)#Set to 1+ to see all the output
+        mm.change_option("PSI4_CCSD(T)","PRINT",1)#Set to 1+ to see all the output
         mol=psr.make_system("""
         0 1
         O    1.2361419   1.0137761  -0.0612424
@@ -28,7 +27,7 @@ def Run(mm):
         """)
     
         wfn=psr.Wavefunction()
-        wfn.system=mol
+        wfn.system=psr.apply_single_basis("PRIMARY","aug-cc-pvdz",mol)
         MyMod=mm.get_module("PSI4_CCSD(T)",0)
         MyCCSDMod=mm.get_module("PSI4_CCSD",0)
         MyMP2Mod=mm.get_module("PSI4_MP2",0)

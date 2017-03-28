@@ -20,8 +20,10 @@ minfo = {
 
 
 minfo['DF-SCF']['options']={
+   "BASIS_SET":(OT_String,"PRIMARY",False,None,"The key for the basis set"),
    "IS_DRY":(OT_Bool,False,False,None,"Will this computation really run?"),
    "PRINT":(OT_Int,1,False,None,"The printing level for Psi4"),
+   "JK_BUILD_KEY":(OT_String,"DF",False,None,"The key for the JK builder"),
    "MAX_ITER":(OT_Int,100,False,None,
          'Maximum number of iterations HF may use'),
    "EGY_TOLERANCE":(OT_Float,1.0e-6,False,None,
@@ -37,29 +39,26 @@ minfo['DF-SCF']['options']={
 }
 
 CorrOptions={
+  "BASIS_SET":(OT_String,"PRIMARY",False,None,"The key for the basis set"),
   "IS_DRY":(OT_Bool,False,False,None,"Will this computation really run?"),
   "PRINT":(OT_Int,1,False,None,"The printing level for Psi4"),
   "FROZEN_CORE":(OT_String,"TRUE",False,None,"Are we freezing the core?"),
-  "MAX_DERIV":(OT_Int,2,False,None,'Max analytic derivative')
+  "MAX_DERIV":(OT_Int,2,False,None,'Max analytic derivative'),
+  "JK_BUILD_KEY":(OT_String,"DF",False,None,"The key for the JK builder")
 }
 
-CCOptions={  
-   "cc_type":(OT_String,"DF",False,None,"Are we using density fitting?"),
-}
 
 minfo['DF-MP2']['options']=CorrOptions.copy()
 minfo['DF-MP2']['options']["SCF_KEY"]=(
     OT_String,"PSI4_SCF",False,None,"The SCF module providing the reference")
 
 minfo['FNO-DF-CCSD']['options']=CorrOptions.copy()
-minfo['FNO-DF-CCSD']['options'].update(CCOptions)
 minfo['FNO-DF-CCSD']['options']["MP2_KEY"]=(
     OT_String,"PSI4_MP2",False,None,"The MP2 module used to generate the "\
                   "initial T2 amplitudes")
   
   
 minfo['FNO-DF-CCSD(T)']['options']=CorrOptions.copy()
-minfo['FNO-DF-CCSD(T)']['options'].update(CCOptions)
 minfo['FNO-DF-CCSD(T)']['options']["CCSD_KEY"]=(OT_String,"PSI4_CCSD",False,
     None,"The CCSD module used to generate the T1 and T2 amplitudes")
 
