@@ -21,15 +21,19 @@ class MP2(psr.EnergyMethod,MP2_Guts):
     def __init__(self, myid):
         super(MP2, self).__init__(myid)
 
+    def dry_run(self,order,wfn):
+        my_hash=self.get_hash(order,wfn)
+        return psr24.psi4_dryrun(wfn,self.options(),self.cache(),
+                                 my_hash,"MP2 TOTAL ENERGY")
     def deriv_(self,order,wfn):
         self.run_sub_calls(order,wfn)
         psr24.psi4_set_options(self.options(),"DF-MP2",wfn)
         if self.options().get("IS_DRY"):
-            my_hash=self.get_hash(order,wfn)
-            return psr24.psi4_dryrun(wfn,self.options(),self.cache(),
-                                     my_hash,"MP2 TOTAL ENERGY")
+            self.dry_run(order,wfn)
         FinalWfn,Egy=psr24.psi4_call('mp2',order,wfn,self.options(),
            self.cache(),self.get_hash(order,wfn))
         self.run_sub_calls(order,wfn)
+        if order==1:
+            self.dry_run(order,wfn)
         psr24.psi4_clean()
         return FinalWfn,Egy
