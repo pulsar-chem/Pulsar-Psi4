@@ -20,9 +20,8 @@ correct_grad=[0.006137035827856574, 0.0035173274613208502, -2.942711926490877e-0
 
 def Run(mm):
         tester = psr.PyTester("Testing Pulsar/Psi4 MP2 Interface")
-        mm.load_module("pulsar_psi4","DF-SCF","PSI4_SCF")
-        mm.load_module("pulsar_psi4","DF-MP2","PSI4_MP2")
-        mm.change_option("PSI4_MP2","PRINT",1)#Set to 1+ to see all the output
+        mm.load_supermodule("pulsar_psi4")
+        mm.change_option("PSI4_DF_MP2","PRINT",1)#Set to 1+ to see all the output
         mol=psr.make_system("""
         0 1
         C -1.2131 -0.6884 0.0000
@@ -42,8 +41,8 @@ def Run(mm):
         wfn=psr.Wavefunction()
         wfn.system=psr.apply_single_basis("PRIMARY","aug-cc-pvdz",mol)
 
-        MyMod=mm.get_module("PSI4_MP2",0)
-        MySCFMod=mm.get_module("PSI4_SCF",0)
+        MyMod=mm.get_module("PSI4_DF_MP2",0)
+        MySCFMod=mm.get_module("PSI4_DF_SCF",0)
     
         NewWfn,Egy=MyMod.deriv(0,wfn)
         tester.test_double("Psi4's MP2 via deriv(0)",Egy[0],correct_energy["MP2"])

@@ -50,15 +50,15 @@ CorrOptions={
 
 minfo['DF-MP2']['options']=CorrOptions.copy()
 minfo['DF-MP2']['options']["SCF_KEY"]=(
-    OT_String,"PSI4_SCF",False,None,"The SCF module providing the reference")
+    OT_String,"PSI4_DF_SCF",False,None,"The SCF module providing the reference")
 
 minfo['FNO-DF-CCSD']['options']=CorrOptions.copy()
 minfo['FNO-DF-CCSD']['options']["MP2_KEY"]=(
-    OT_String,"PSI4_MP2",False,None,"The MP2 module used to generate the "\
+    OT_String,"PSI4_DF_MP2",False,None,"The MP2 module used to generate the "\
                   "initial T2 amplitudes")
   
   
 minfo['FNO-DF-CCSD(T)']['options']=CorrOptions.copy()
-minfo['FNO-DF-CCSD(T)']['options']["CCSD_KEY"]=(OT_String,"PSI4_CCSD",False,
+minfo['FNO-DF-CCSD(T)']['options']["CCSD_KEY"]=(OT_String,"PSI4_DF_FNO_CCSD",False,
     None,"The CCSD module used to generate the T1 and T2 amplitudes")
 

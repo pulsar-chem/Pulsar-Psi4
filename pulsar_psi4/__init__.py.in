@@ -20,4 +20,10 @@ psr.print_global_debug("Psi4 is using "+str(psi4.nthread())+" threads")
 from .modinfo import *
 from .creator import *
 
+def initialize(mm):
+    mm.load_module("pulsar_psi4","DF-SCF","PSI4_DF_SCF")
+    mm.load_module("pulsar_psi4","DF-MP2","PSI4_DF_MP2")
+    mm.load_module("pulsar_psi4","FNO-DF-CCSD","PSI4_DF_FNO_CCSD")
+    mm.load_module("pulsar_psi4","FNO-DF-CCSD(T)","PSI4_DF_FNO_CCSD(T)")
+
 

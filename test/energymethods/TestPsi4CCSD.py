@@ -13,10 +13,8 @@ correct_grad=[0.0002402802000335972, 0.0004993106264440486, 0.009092481746614771
 
 def Run(mm):
         tester = psr.PyTester("Testing Pulsar/Psi4 CCSD Interface")
-        mm.load_module("pulsar_psi4","DF-SCF","PSI4_SCF")
-        mm.load_module("pulsar_psi4","DF-MP2","PSI4_MP2")
-        mm.load_module("pulsar_psi4","FNO-DF-CCSD","PSI4_CCSD")
-        mm.change_option("PSI4_CCSD","PRINT",1)#Set to 1+ to see all the output
+        mm.load_supermodule("pulsar_psi4")
+        mm.change_option("PSI4_DF_FNO_CCSD","PRINT",1)#Set to 1+ to see all the output
         mol=psr.make_system("""
         0 1
         O    1.2361419   1.0137761  -0.0612424
@@ -26,9 +24,10 @@ def Run(mm):
     
         wfn=psr.Wavefunction()
         wfn.system=psr.apply_single_basis("PRIMARY","aug-cc-pvdz",mol)
-        MyMod=mm.get_module("PSI4_CCSD",0)
-        MyHFMod=mm.get_module("PSI4_SCF",0)
-        MyMP2Mod=mm.get_module("PSI4_MP2",0)
+
+        MyMod=mm.get_module("PSI4_DF_FNO_CCSD",0)
+        MyHFMod=mm.get_module("PSI4_DF_SCF",0)
+        MyMP2Mod=mm.get_module("PSI4_DF_MP2",0)
         
         NewWfn,Egy=MyMod.deriv(0,wfn)
         tester.test_double("Psi4's CCSD via deriv(0)",Egy[0],correct_energy["CCSD"])
