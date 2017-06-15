@@ -7,7 +7,7 @@ find_package(pulsar REQUIRED)
 # Core pulsar module tests
 ########################
 function(pulsar_psi4_py_test dir test_name)
-  pulsar_py_test(${dir} ${test_name} ${STAGE_DIR}/${PULSAR_MODULE_DIR})
+  pulsar_py_test(${dir} ${test_name} ${PULSAR_PSI4_PREFIX})
 endfunction()
 
 foreach(dir energymethods)
